@@ -1,0 +1,24 @@
+# Path: Cargo.toml
+[package]
+name = "md2pdf-cli"
+version = "0.1.0"
+edition = "2024"
+authors = ["Netajam"]
+description = "A CLI tool that uses Typst to convert Markdown to PDF."
+license = "MIT"
+repository = "https://github.com/Netajam/md2pdf-cli"
+
+[dependencies]
+# CLI Parsing
+clap = { version = "4.5.4", features = ["derive"] }
+indicatif = "0.17.8"
+walkdir = "2.5.0"
+
+# Error Handling
+thiserror = "1.0.61"
+anyhow = "1.0.86"
+
+# Markdown Parsing
+pulldown-cmark = "0.11.0"
+
+tempfile = "3.10.1"
