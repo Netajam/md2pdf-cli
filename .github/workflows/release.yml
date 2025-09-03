@@ -26,14 +26,17 @@ jobs:
             os_name: Linux
             target: x86_64-unknown-linux-gnu
             asset_name: md2pdf-cli-linux-x86_64
+            binary_name: md2pdf-cli
           - os: windows-latest
             os_name: Windows
             target: x86_64-pc-windows-msvc
             asset_name: md2pdf-cli-windows-x86_64
+            binary_name: md2pdf-cli.exe
           - os: macos-latest
             os_name: macOS
             target: x86_64-apple-darwin
             asset_name: md2pdf-cli-macos-x86_64
+            binary_name: md2pdf-cli
 
     steps:
       - name: Checkout repository
@@ -56,36 +59,16 @@ jobs:
       - name: Build binary
         run: cargo build --release --locked --target ${{ matrix.target }}
 
-      - name: Verify Built Binary Version (Linux/macOS)
-        if: runner.os != 'Windows'
+      - name: Verify Built Binary Version
         run: |
           echo "--- Verifying built binary version ---"
-          ./target/${{ matrix.target }}/release/md2pdf-cli --version
+          ./target/${{ matrix.target }}/release/${{ matrix.binary_name }} --version
           echo "--------------------------------------"
 
-      - name: Verify Built Binary Version (Windows)
-        if: runner.os == 'Windows'
+      - name: Stage assets for artifact upload
         run: |
-          echo "--- Verifying built binary version ---"
-          ./target/${{ matrix.target }}/release/md2pdf-cli.exe --version
-          echo "--------------------------------------"
-
-      - name: Create packaging directory
-        run: mkdir -p staging
-
-      - name: Stage assets (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          cp target/${{ matrix.target }}/release/md2pdf-cli staging/
-          cp README.md staging/
-          cp LICENCE staging/
-
-      - name: Stage assets (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          cp target/${{ matrix.target }}/release/md2pdf-cli.exe staging/
-          cp README.md staging/
-          cp LICENCE staging/
+          mkdir -p staging
+          cp target/${{ matrix.target }}/release/${{ matrix.binary_name }} staging/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -109,13 +92,17 @@ jobs:
         with:
           path: artifacts/
 
+      # --- THIS STEP IS THE MAIN FIX ---
       - name: Package downloaded artifacts
         run: |
           for dir in artifacts/*; do
             artifact_name=$(basename "$dir")
-            if [[ "$artifact_name" == *"windows"* ]];
-              then (cd "$dir" && zip -r "../${artifact_name}.zip" .);
-              else (cd "$dir" && tar -czf "../${artifact_name}.tar.gz" *);
+            if [[ "$artifact_name" == *"windows"* ]]; then
+              # For Windows, find the .exe and zip it
+              (cd "$dir" && zip "../${artifact_name}.zip" "md2pdf-cli.exe")
+            else
+              # For Linux/macOS, find the binary and tar it
+              (cd "$dir" && tar -czf "../${artifact_name}.tar.gz" "md2pdf-cli")
             fi
           done
       
