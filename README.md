@@ -26,11 +26,37 @@ typst --version
 
 ## Installation
 
-### From GitHub Releases
+### Recommended Install Method
+
+#### For Linux & macOS (in Bash or Zsh)
+
+You can install `md2pdf-cli` with a single command. This script will automatically detect your operating system, download the correct binary from the latest GitHub release, and install it to `~/.local/bin`.
+
+```sh
+curl -sSfL https://Netajam.github.io/md2pdf-cli/install.sh | sh
+```
+> **Note:** If the `md2pdf-cli` command isn't available after installation, you may need to open a new terminal or add `~/.local/bin` to your shell's `PATH` by adding `export PATH="$HOME/.local/bin:$PATH"` to your `~/.bashrc` or `~/.zshrc` file.
+
+---
+
+#### For Windows (in PowerShell)
+
+Open PowerShell and run the following command. This will download and install the latest `md2pdf-cli.exe` to a user-specific directory and add it to your PATH.
+
+```powershell
+iwr https://Netajam.github.io/md2pdf-cli/install.ps1 -useb | iex
+```
+> **Note:** You must open a **new** PowerShell or Command Prompt window after the installation is complete for the `md2pdf-cli` command to be available.
+
+---
+
+### Other Installation Methods
+
+#### From GitHub Releases (Manual)
 
 You can download a pre-compiled binary for your operating system (Windows, macOS, Linux) from the [Releases](https://github.com/Netajam/md2pdf-cli/releases) page. Unzip the archive and place the executable in a directory included in your system's `PATH`.
 
-### From Source
+#### From Source
 
 If you have the Rust toolchain installed, you can build and install directly from source:
 ```bash
