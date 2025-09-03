@@ -78,14 +78,14 @@ jobs:
         run: |
           cp target/${{ matrix.target }}/release/md2pdf-cli staging/
           cp README.md staging/
-          cp LICENSE staging/
+          cp LICENCE staging/
 
       - name: Stage assets (Windows)
         if: runner.os == 'Windows'
         run: |
           cp target/${{ matrix.target }}/release/md2pdf-cli.exe staging/
           cp README.md staging/
-          cp LICENSE staging/
+          cp LICENCE staging/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
