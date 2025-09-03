@@ -1,4 +1,3 @@
-# Path:.github\workflows\release.yml
 # .github/workflows/release.yml
 
 name: Rust Release CI
@@ -40,6 +39,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Verify Cargo.toml Version
+        run: |
+          echo "--- Verifying Cargo.toml content ---"
+          grep 'version =' Cargo.toml
+          echo "------------------------------------"
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -50,6 +55,20 @@ jobs:
 
       - name: Build binary
         run: cargo build --release --locked --target ${{ matrix.target }}
+
+      - name: Verify Built Binary Version (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          echo "--- Verifying built binary version ---"
+          ./target/${{ matrix.target }}/release/md2pdf-cli --version
+          echo "--------------------------------------"
+
+      - name: Verify Built Binary Version (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          echo "--- Verifying built binary version ---"
+          ./target/${{ matrix.target }}/release/md2pdf-cli.exe --version
+          echo "--------------------------------------"
 
       - name: Create packaging directory
         run: mkdir -p staging
